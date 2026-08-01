@@ -1,50 +1,128 @@
 <%- include('./partials/header') %>
-    <div class="w-full h-screen flex items-start px-20 py-20">
-        <div class="w-[25%] flex h-screen flex-col items-start">
-            <div class="flex items-center gap-2">
-                <h3>sort by</h3>
-                <form action="/shop">
-                    <select class="border-[1px] px-2 py-1" name="sortby" id="">
-                        <option value="popular">Popular</option>
-                        <option value="newest">Newest</option>
-                    </select>
-                </form>
-            </div>
-            <div class="flex flex-col mt-20">
-                <a class="block w-fit mb-2" href="">New Collection</a>
-                <a class="block w-fit mb-2" href="">All Products</a>
-                <a class="block w-fit mb-2" href="">Discounted Products</a>
-            </div>
-            <div class="mt-32">
-                <a class="block w-fit mb-2" href="">Filter by :</a>
-                <a class="block w-fit mb-2" href="">Availability</a>
-                <a class="block w-fit mb-2" href="">Discount</a>
+
+<div class="w-full min-h-screen pt-24 pb-12 px-6 md:px-16 flex flex-col md:flex-row gap-10 bg-zinc-50">
+    <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div class="fixed top-20 left-1/2 -translate-x-1/2 p-3 px-6 rounded-lg bg-red-500 text-white shadow-lg z-50">
+            <span class="inline-block text-sm font-medium"><%= error %></span>
+        </div>
+    <% } %>
+
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="fixed top-20 left-1/2 -translate-x-1/2 p-3 px-6 rounded-lg bg-emerald-500 text-white shadow-lg z-50">
+            <span class="inline-block text-sm font-medium"><%= success %></span>
+        </div>
+    <% } %>
+
+    <!-- Sidebar Filters -->
+    <div class="w-full md:w-64 flex flex-col gap-8 shrink-0">
+        <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Sort By</h3>
+            <select class="w-full border border-zinc-200 rounded-xl px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="popular">Popular</option>
+                <option value="newest">Newest First</option>
+            </select>
+        </div>
+
+        <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Collection</h3>
+            <div class="flex flex-col space-y-2 text-sm font-medium text-zinc-600">
+                <a class="hover:text-indigo-600 transition-colors" href="/shop">All Products</a>
+                <a class="hover:text-indigo-600 transition-colors text-zinc-400" href="#">New Arrival</a>
+                <a class="hover:text-indigo-600 transition-colors text-zinc-400" href="#">Discounted</a>
             </div>
         </div>
-        <div class="w-[75%] flex flex-col gap-5 h-screen">
-            <div class="flex items-start gap-5">
-                <% products.forEach(function(product){ %>
-                    <div class="w-60">
-                        <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
-                            <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
-                                alt="">
-                        </div>
-                        <div
-                            class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]">
-                            <div>
-                                <h3>
-                                    <%= product.name %>
-                                </h3>
-                                <h4>â‚¹ <%= product.price %>
-                                </h4>
-                            </div>
-                            <a class="w-7 h-7 flex items-center justify-center rounded-full bg-white" href="">
-                                <i class="ri-add-line"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <% }) %>
+
+        <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Filter By</h3>
+            <div class="flex flex-col space-y-2 text-sm font-medium text-zinc-600">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <span>In Stock Only</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <span>With Discount</span>
+                </label>
             </div>
         </div>
     </div>
-    <%- include('./partials/footer') %>
+
+    <!-- Product Grid -->
+    <div class="flex-1">
+        <div class="mb-6 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-zinc-900">Products (<%= products.length %>)</h2>
+        </div>
+
+        <% if (products.length === 0) { %>
+            <div class="w-full py-20 text-center bg-white rounded-2xl border border-zinc-200">
+                <i class="ri-shopping-bag-line text-5xl text-zinc-300 mb-3 block"></i>
+                <h3 class="text-lg font-semibold text-zinc-700">No products available yet</h3>
+                <p class="text-sm text-zinc-400 mt-1">Check back later or login as admin to add new products.</p>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <% products.forEach(function(product){ %>
+                    <div class="group rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="w-full h-56 flex items-center justify-center p-4 relative" style="background-color: <%= product.bgcolor || '#f4f4f5' %>;">
+                            <% if (product.discount > 0) { %>
+                                <span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                    -<%= product.discount %>%
+                                </span>
+                            <% } %>
+                            <% if (product.image && product.image.length) { %>
+                                <img class="h-44 object-contain transition-transform duration-300 group-hover:scale-105" 
+                                     src="data:<%= product.contentType || 'image/jpeg' %>;base64,<%= product.image.toString('base64') %>"
+                                     alt="<%= product.name %>">
+                            <% } else { %>
+                                <div class="flex flex-col items-center justify-center text-zinc-400">
+                                    <i class="ri-image-line text-4xl mb-1"></i>
+                                    <span class="text-xs">No Image</span>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="p-4 flex items-center justify-between" style="background-color: <%= product.panelcolor || '#ffffff' %>; color: <%= product.textcolor || '#18181b' %>;">
+                            <div>
+                                <h3 class="font-semibold text-base line-clamp-1"><%= product.name %></h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="font-bold text-sm">₹ <%= product.price - Math.round((product.price * product.discount) / 100) %></span>
+                                    <% if (product.discount > 0) { %>
+                                        <span class="text-xs text-zinc-400 line-through">₹ <%= product.price %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <button onclick="addToCart('<%= product._id %>')" 
+                                    class="w-9 h-9 flex items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow transition-colors shrink-0">
+                                <i class="ri-add-line text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+async function addToCart(productId) {
+    try {
+        const response = await fetch('/users/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert('Item added to cart!');
+            window.location.reload();
+        } else {
+            alert(data.message || 'Could not add to cart');
+        }
+    } catch (err) {
+        alert('Failed to add product to cart');
+    }
+}
+</script>
+
+<%- include('./partials/footer') %>

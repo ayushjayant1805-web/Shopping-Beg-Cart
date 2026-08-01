@@ -1,21 +1,34 @@
 const mongoose = require('mongoose');
 
-
-const userSchema=mongoose.Schema({
-    fullname:String,
-    email:String,
-    password:String,
-    cart:{
-        type:Array,
-        default:[]
+const userSchema = mongoose.Schema({
+    fullname: {
+        type: String,
+        required: true,
+        trim: true,
     },
-    
-    orders:{
-        type:Array,
-        default:[],
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
-    contact:Number,
-    picture:String,
-});
+    password: {
+        type: String,
+        required: true,
+    },
+    cart: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'product',
+        },
+    ],
+    orders: {
+        type: Array,
+        default: [],
+    },
+    contact: Number,
+    picture: String,
+}, { timestamps: true });
 
-module.exports=  mongoose.model("user",userSchema);
+module.exports = mongoose.model("user", userSchema);

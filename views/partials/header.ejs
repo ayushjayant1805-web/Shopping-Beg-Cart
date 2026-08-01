@@ -4,12 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Shopping Bag – Premium Fashion Store</title>
+    <meta name="description" content="Shop the latest fashion at Shopping Bag. Premium quality clothes, bags and accessories.">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link { transition: color 0.2s ease; }
+        .nav-link:hover { color: #6366f1; }
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+    </style>
 </head>
 
-<body class="font-['helvetica_now_display']">
-    <nav class="w-full fixed top-0 left-0 px-5 py-3">
-        <h3 class="text-xl">SHOPPING-BAG</h3>
+<body class="bg-white text-zinc-800">
+    <nav class="w-full fixed top-0 left-0 z-50 bg-white border-b border-zinc-100 px-8 py-4 flex items-center justify-between shadow-sm">
+        <a href="/" class="text-xl font-bold tracking-tight text-zinc-900">
+            SHOPPING<span class="text-indigo-500">BAG</span>
+        </a>
+        <div class="flex items-center gap-6">
+            <a href="/shop" class="nav-link text-sm font-medium text-zinc-600">Shop</a>
+            <a href="/owners/login" class="nav-link text-sm font-medium text-zinc-600">Admin</a>
+            <a href="/users/cart" class="nav-link relative text-zinc-600">
+                <i class="ri-shopping-bag-line text-xl"></i>
+                <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                    <span class="cart-badge"><%= cartCount %></span>
+                <% } %>
+            </a>
+            <% if (typeof user !== 'undefined' && user) { %>
+                <form action="/users/logout" method="post" class="inline">
+                    <button type="submit" class="text-sm font-medium text-zinc-600 nav-link bg-transparent border-0 cursor-pointer">Logout</button>
+                </form>
+            <% } %>
+        </div>
     </nav>
